@@ -1,21 +1,24 @@
-import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.Font;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
+import java.awt.event.KeyEvent;
+import java.awt.KeyEventDispatcher;
 import java.util.Calendar;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.Timer;
 
 public class Tetriss extends JPanel {
     private static JFrame window;
     private static JLabel minuteField;
+    private static JLabel arrowKeyField;
     private Board board;
     public static final int WIDTH = 445, HEIGHT = 629;
     private static long startTime;
+    private static int arrowKeyCount;
     
     public Tetriss() {
         window = new JFrame("Tetriss");
@@ -24,15 +27,17 @@ public class Tetriss extends JPanel {
 
         JPanel panel = new JPanel();
         minuteField = new JLabel();
-        minuteField.setForeground(Color.RED); // Set text color to white
-        minuteField.setFont(new Font("Arial", Font.BOLD, 24)); // Set font style
+        arrowKeyField = new JLabel();
         panel.add(minuteField);
+        panel.add(arrowKeyField);
         window.add(panel, "North");
 
         board = new Board();
+        ArrowKeyListener arrowKeyListener = new ArrowKeyListener();
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(arrowKeyListener);
+        board.addKeyListener(arrowKeyListener);
         window.add(board);
 
-        window.addKeyListener(board);
         window.setVisible(true);
     }
     
@@ -52,7 +57,7 @@ public class Tetriss extends JPanel {
                         EventQueue.invokeLater(new Runnable() {
                             @Override
                             public void run() {
-                                minuteField.setText("<html><span style='font-size:36px;'>Minutes: " + timeDiff + "</span></html>");
+                                minuteField.setText("Minutes: " + timeDiff);
                             }
                         });
                     }
@@ -61,5 +66,41 @@ public class Tetriss extends JPanel {
                 timer.start();
             }
         }).start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                KeyEventDispatcher[] dispatchers = (KeyEventDispatcher[]) KeyboardFocusManager.getCurrentKeyboardFocusManager().getKeyEventDispatchers();
+ArrowKeyListener arrowKeyListener = (ArrowKeyListener) dispatchers[0];
+
+                while (true) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    EventQueue.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            arrowKeyField.setText("Arrow Keys: " + arrowKeyCount);
+                            arrowKeyCount = 0;
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
+    static class ArrowKeyListener implements KeyEventDispatcher {
+        @Override
+        public boolean dispatchKeyEvent(KeyEvent e) {
+            if (e.getID() == KeyEvent.KEY_PRESSED) {
+                if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN
+                        || e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    arrowKeyCount++;
+                }
+            }
+            return false;
+        }
     }
 }
