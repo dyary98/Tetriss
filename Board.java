@@ -22,6 +22,7 @@ public class Board extends JPanel implements KeyListener {
     public static final int BlockSize = 30;
     private Timer loop;
     private int delay = 60 / 1000;
+    private static int arrowKeyPressCount;
     
     private Color[] colors = {Color.decode("#ed1c24"), Color.decode("#ff7f27"), Color.decode("#fff200"), 
     Color.decode("#22b14c"), Color.decode("#00a2e8"), Color.decode("#a349a4"), Color.decode("#3f48cc")};
@@ -161,15 +162,19 @@ public class Board extends JPanel implements KeyListener {
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             currentShape.setDeltaX(1);
+            arrowKeyPressCount++;
         }
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             currentShape.setDeltaX(-1);
+            arrowKeyPressCount++;
         }
         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             currentShape.speedUp();
+            arrowKeyPressCount++;
         }
         if (e.getKeyCode() == KeyEvent.VK_UP) {
             currentShape.rotateShape();
+            arrowKeyPressCount++;
         }
     }
 
@@ -178,5 +183,8 @@ public class Board extends JPanel implements KeyListener {
         if(e.getKeyCode() == KeyEvent.VK_DOWN){
             currentShape.speedDown();
         }
+    }
+    public static int getArrowKeyPressCount() {
+        return arrowKeyPressCount;
     }
 }

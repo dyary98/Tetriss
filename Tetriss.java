@@ -1,24 +1,23 @@
+import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.KeyboardFocusManager;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.KeyEventDispatcher;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.Timer;
 
 public class Tetriss extends JPanel {
     private static JFrame window;
     private static JLabel minuteField;
-    private static JLabel arrowKeyField;
     private Board board;
     public static final int WIDTH = 445, HEIGHT = 629;
     private static long startTime;
-    private static int arrowKeyCount;
+    private static JLabel arrowKeyPressCountField; // Add this label to display the arrow key press count
+
     
     public Tetriss() {
         window = new JFrame("Tetriss");
@@ -27,17 +26,17 @@ public class Tetriss extends JPanel {
 
         JPanel panel = new JPanel();
         minuteField = new JLabel();
-        arrowKeyField = new JLabel();
+        minuteField.setForeground(Color.RED); // Set text color to white
+        minuteField.setFont(new Font("Arial", Font.BOLD, 24)); // Set font style
         panel.add(minuteField);
-        panel.add(arrowKeyField);
         window.add(panel, "North");
-
+        arrowKeyPressCountField = new JLabel("Arrow Key Press Count: 0"); // Initialize the arrow key press count label
+        arrowKeyPressCountField.setFont(new Font("Arial", Font.PLAIN, 16));
+        window.add(arrowKeyPressCountField, "South"); // Add the label to the bottom of the window
         board = new Board();
-        ArrowKeyListener arrowKeyListener = new ArrowKeyListener();
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(arrowKeyListener);
-        board.addKeyListener(arrowKeyListener);
         window.add(board);
 
+        window.addKeyListener(board);
         window.setVisible(true);
     }
     
@@ -57,7 +56,7 @@ public class Tetriss extends JPanel {
                         EventQueue.invokeLater(new Runnable() {
                             @Override
                             public void run() {
-                                minuteField.setText("Minutes: " + timeDiff);
+                                minuteField.setText("<html><span style='font-size:36px;'>Minutes: " + timeDiff + "</span></html>");
                             }
                         });
                     }
@@ -66,41 +65,21 @@ public class Tetriss extends JPanel {
                 timer.start();
             }
         }).start();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                KeyEventDispatcher[] dispatchers = (KeyEventDispatcher[]) KeyboardFocusManager.getCurrentKeyboardFocusManager().getKeyEventDispatchers();
-ArrowKeyListener arrowKeyListener = (ArrowKeyListener) dispatchers[0];
-
-                while (true) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    EventQueue.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            arrowKeyField.setText("Arrow Keys: " + arrowKeyCount);
-                            arrowKeyCount = 0;
-                        }
-                    });
-                }
-            }
-        }).start();
-    }
-
-    static class ArrowKeyListener implements KeyEventDispatcher {
+    
+    new Thread(new Runnable() {
         @Override
-        public boolean dispatchKeyEvent(KeyEvent e) {
-            if (e.getID() == KeyEvent.KEY_PRESSED) {
-                if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN
-                        || e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    arrowKeyCount++;
+        public void run() {
+            while (true) {
+                int arrowKeyPressCount = Board.getArrowKeyPressCount(); 
+                arrowKeyPressCountField.setText("Arrow Key Press Count: " + arrowKeyPressCount); // Update the label with the current count
+    
+                try {
+                    Thread.sleep(5000); // Sleep for 5 seconds before checking again
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
-            return false;
         }
-    }
+    }).start();
+}
 }
