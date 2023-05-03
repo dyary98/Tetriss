@@ -22,6 +22,8 @@ public class Tetriss extends JPanel {
     public Tetriss() {
         window = new JFrame("Tetriss");
         window.setSize(WIDTH, HEIGHT);
+        window.setDropTarget(null);
+        window.setLocationRelativeTo(null);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel panel = new JPanel();

@@ -40,7 +40,7 @@ public class Board extends JPanel implements KeyListener {
     private static Shape currentShape, nextShape;
     private int count = 0;
     private int score;
-
+    private boolean gameOver = false;
 
     public Board(){
         random = new Random();
@@ -92,6 +92,10 @@ public class Board extends JPanel implements KeyListener {
     startGame();    
 }
     private void movementAndTimer (){
+        if (gameOver) {
+            startGame();
+            return;
+        }
         currentShape.movementAndTimer();
     }
 
@@ -122,11 +126,13 @@ public class Board extends JPanel implements KeyListener {
     
     }
     public void startGame() {
+        stopGame();
         setNextShape();
         setCurrentShape();
+        gameOver = false;
         loop.start();
 
-
+        
     }
     public Color[][] getBoard() {
         return board;
@@ -149,12 +155,24 @@ public class Board extends JPanel implements KeyListener {
             for (int col = 0; col < currentShape.getCoords()[0].length; col++) {
                 if (currentShape.getCoords()[row][col] != 0) {
                     if (board[currentShape.getY() + row][currentShape.getX() + col] != null) {
+                        gameOver = true;
                         System.out.println("gameover");
                     }
                 }
             }
         }
     }
+    public void stopGame() {
+        score = 0;
+
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[row].length; col++) {
+                board[row][col] = null;
+            }
+        }
+        loop.stop();
+    }
+    
     public void checkGameOver(){
 
     }

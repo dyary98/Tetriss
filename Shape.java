@@ -126,7 +126,7 @@ public class Shape {
             for (int j = 0; j < board.getBoard()[0].length; j++) {
                 if (board.getBoard()[i][j] != null) {
                     count++;
-                                    System.out.println("score");
+                                System.out.println("score");
 
                 }
 
