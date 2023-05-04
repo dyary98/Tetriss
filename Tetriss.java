@@ -4,10 +4,14 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.Timer;
 
 public class Tetriss extends JPanel {
@@ -17,12 +21,13 @@ public class Tetriss extends JPanel {
     public static final int WIDTH = 445, HEIGHT = 629;
     private static long startTime;
     private static JLabel arrowKeyPressCountField; // Add this label to display the arrow key press count
+    private JTextField textField;
+
 
     
     public Tetriss() {
-        window = new JFrame("Tetriss");
-        window.setSize(WIDTH, HEIGHT);
-        window.setDropTarget(null);
+        window = new JFrame("AUIS Tetriss");
+        window.setSize(WIDTH +200, HEIGHT + 100);
         window.setLocationRelativeTo(null);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -31,9 +36,12 @@ public class Tetriss extends JPanel {
         minuteField.setForeground(Color.RED); // Set text color to white
         minuteField.setFont(new Font("Arial", Font.BOLD, 24)); // Set font style
         panel.add(minuteField);
+       
         window.add(panel, "North");
         arrowKeyPressCountField = new JLabel("Arrow Key Press Count: 0"); // Initialize the arrow key press count label
         arrowKeyPressCountField.setFont(new Font("Arial", Font.PLAIN, 16));
+        ImageIcon icon = new ImageIcon("./AUIS_symbol.png");
+        window.setIconImage(icon.getImage());
         window.add(arrowKeyPressCountField, "South"); // Add the label to the bottom of the window
         board = new Board();
         window.add(board);
@@ -81,6 +89,20 @@ public class Tetriss extends JPanel {
                     e.printStackTrace();
                 }
             }
+        }
+    }).start();
+    new Thread(new Runnable() {
+        @Override
+        public void run() {
+            List l1 = new List();
+            ArrayList<Player> players = new ArrayList<>();
+            l1.players.add(new Player("Alice", 10));
+            l1.players.add(new Player("Bob", 5));
+            l1.players.add(new Player("Charlie", 15));
+            l1.players.add(new Player("Dave", 8));
+
+            Leaderboard leaderboard = new Leaderboard( l1.players
+            );
         }
     }).start();
 }

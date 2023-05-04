@@ -12,6 +12,7 @@ import java.util.Random;
 
 import javax.swing.Timer;
 import javax.security.auth.kerberos.KeyTab;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class Board extends JPanel implements KeyListener {
@@ -92,7 +93,21 @@ public class Board extends JPanel implements KeyListener {
     startGame();    
 }
     private void movementAndTimer (){
+        System.out.println(Shape.getScore());
         if (gameOver) {
+            List l1 = new List();
+            System.out.println(score);
+            System.out.println(Shape.getScore());
+            String name = JOptionPane.showInputDialog("Game Over! Enter your name:");
+            if(name!=null && Shape.getScore() > 100 && !name.trim().isEmpty()){
+                l1.players.add(new Player(name, Shape.getScore() ));
+            }
+            
+            for (int i = 0; i < l1.players.size(); i++) {
+                System.out.println(l1.players.get(i).getScore());
+            }
+            Leaderboard l2 = new Leaderboard(l1.players);
+            Shape.setScore(-Shape.getScore()) ;
             startGame();
             return;
         }
@@ -163,7 +178,6 @@ public class Board extends JPanel implements KeyListener {
         }
     }
     public void stopGame() {
-        score = 0;
 
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board[row].length; col++) {

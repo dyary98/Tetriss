@@ -1,10 +1,13 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.SwingUtilities;
 
 public class Shape {
+    public static final Color Blue = new Color(0,40,85);
+    public static final Color Gold = new Color(201,151,0);
     private int delayNormal = 600;
     private int delayFast = 100;
     private long beginTime;
@@ -24,7 +27,7 @@ public class Shape {
     private Board board;
     private Color color;
     private long time, lastTime;
-    private static int score;
+    private static AtomicInteger aScore = new AtomicInteger(0);
 
     private int[][] cords;
     public Shape(int[][] cords, Board board, Color color) {
@@ -114,8 +117,9 @@ public class Shape {
                 }
             }
         }
-        
-        g.drawString("Score: " + score, 400, 400);
+        g.setColor(Gold);
+        Font font = new Font("Tahoma", Font.PLAIN, 40);
+        g.setFont(font);        g.drawString("Score: " + aScore, 400, 400);
 
     }
     private void checkLine() {
@@ -126,7 +130,7 @@ public class Shape {
             for (int j = 0; j < board.getBoard()[0].length; j++) {
                 if (board.getBoard()[i][j] != null) {
                     count++;
-                                System.out.println("score");
+                                System.out.println("aScore");
 
                 }
 
@@ -134,7 +138,8 @@ public class Shape {
             }
             if (count < board.getBoard()[0].length) {
                 size--;
-                score++;
+                aScore.incrementAndGet();
+                
             }
         }
     }
@@ -194,7 +199,7 @@ public class Shape {
 
     public void speedUp() {
         speedSwitch = delayFast;
-        score++;
+        aScore.incrementAndGet();
     }
     public Color getColor() {
         return color;
@@ -220,6 +225,13 @@ public class Shape {
 
     public int getY() {
         return y;
+    }
+    public static int getScore(){
+        return aScore.get();
+    }
+
+    public static void setScore(int num){
+        aScore.addAndGet(num);
     }
 
 }
